@@ -1,0 +1,32 @@
+# Build artifacts
+/build/
+.gradle/
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle GUI config
+gradle-app.setting
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# IDE specific files (e.g., IntelliJ IDEA)
+.idea/
+*.iml
+*.iws
+*.ipr
+*.classpath
+*.project
+.settings/
+.vscode
+
+# Local configuration files
+*.properties.local
+local.properties
+
+# Dependency caches
+.gradletasknamecache
+
+.envrc
