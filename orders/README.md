@@ -1,6 +1,6 @@
 # orders
 
-FIXME: my new application.
+kafka edu
 
 ## Installation
 
@@ -50,6 +50,20 @@ Run that uberjar:
 
     $ java -jar target/net.clojars.orders/orders-0.1.0-SNAPSHOT.jar
 
+Run with Nrepl like this:
+```sh   
+   $ clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:run-m -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]" --port 7888
+```
+
+
+## Local Kafka dev Setup (4.1.1) (or ignore this and use docker.)
+```bash
+$ set KAFKA_CLUSTER_ID "$(kafka-storage.sh random-uuid)"
+$ kafka-storage.sh format --standalone -t $KAFKA_CLUSTER_ID -c config/server.properties
+$ kafka-server-start.sh kafka_2.13-4.1.1/config/server.properties
+```
+
+
 ## Options
 
 FIXME: listing of options this app accepts.
@@ -61,10 +75,6 @@ FIXME: listing of options this app accepts.
 ### Bugs
 
 ...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
 
 ## License
 

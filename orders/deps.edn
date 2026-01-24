@@ -3,7 +3,7 @@
 
         metosin/jsonista {:mvn/version "0.3.13"}
 
-        org.apache.kafka/kafka-clients {:mvn/version "4.1.1"}
+       ;;  org.apache.kafka/kafka-clients {:mvn/version "4.1.1"}
         org.apache.kafka/kafka-streams {:mvn/version "4.1.1"}
 
         ;; Source: https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
