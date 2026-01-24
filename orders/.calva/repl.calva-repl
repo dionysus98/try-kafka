@@ -1,0 +1,28 @@
+; Jacking in...
+; Connecting using "deps.edn" project type.
+; Starting Jack-in: (cd /home/avy/learn/kafka/kafka-jawa/orders; clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version,"1.5.1"},cider/cider-nrepl {:mvn/version,"0.58.0"}}}' -M:run-x -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]")
+; Using host:port localhost:39557 ...
+; Hooking up nREPL sessions on port 39557...
+; Connected session: clj, port: 39557
+; Evaluating code from settings: 'calva.autoEvaluateCode.onConnect.clj'
+nil
+clj꞉user꞉> 
+"Please see https://calva.io/output/#about-stdout-in-the-repl-window
+about why stdout printed to this file is prepended with `;` to be line comments."
+clj꞉user꞉> 
+; Jack-in done.
+clj꞉user꞉> 
+; Syntax error compiling at (src/orders/core.clj:51:1).
+; Unable to resolve symbol: _ in this context
+clj꞉orders.core꞉> 
+; Syntax error compiling at (src/orders/core.clj:51:1).
+; Unable to resolve symbol: _ in this context
+clj꞉orders.core꞉> 
+; 4
+; 5
+6
+clj꞉orders.core꞉> 
+; Syntax error compiling at (src/orders/core.clj:44:36).
+; Unable to resolve symbol: de-init! in this context
+clj꞉orders.core꞉> 
+; nREPL Connection was closed for client: nrepl-client-1, port: 39557

@@ -7,7 +7,7 @@
   (:import
    [org.apache.kafka.clients.consumer ConsumerConfig]
    [org.apache.kafka.streams KafkaStreams StreamsConfig Topology]
-   [org.apache.kafka.streams.errors LogAndContinueExceptionHandler])
+   #_[org.apache.kafka.streams.errors LogAndContinueExceptionHandler])
   (:gen-class))
 
 (def ^:const APP_ID "orders-app")
@@ -15,8 +15,8 @@
 (def config
   {StreamsConfig/APPLICATION_ID_CONFIG     APP_ID
    StreamsConfig/BOOTSTRAP_SERVERS_CONFIG  "localhost:9092"
-  ;;  StreamsConfig/DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG
-  ;;  (.getName LogAndContinueExceptionHandler)
+   ;;  StreamsConfig/DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG
+   ;;  (.getName LogAndContinueExceptionHandler)
    ConsumerConfig/AUTO_OFFSET_RESET_CONFIG "latest"
    StreamsConfig/NUM_STREAM_THREADS_CONFIG "2"})
 
@@ -41,10 +41,10 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& _]
-  (nrepl/start!)
+  (utils/add-shutdown-hook! (fn [] (de-init!) (nrepl/stop!)))
   (try
-    (let [^KafkaStreams streams (init!)]
-      (utils/add-shutdown-hook! #(.close streams)))
+    (nrepl/start!)
+    (init!)
     (catch Exception e
       (log/error e "Failed to start Order Streams app :c"))))
 

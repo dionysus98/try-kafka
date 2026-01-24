@@ -9,10 +9,12 @@
   (when-not @!server
     (reset! !server (start-server :port port :bind "127.0.0.1"))))
 
-(defn stop! []
-  (when-let [s @!server]
-    (stop-server s)
-    (reset! !server nil)))
+(defn stop!
+  ([] (stop! @!server))
+  ([server]
+   (when-let [s server]
+     (stop-server s)
+     (reset! !server nil))))
 
 (defn restart! []
   (stop!)
