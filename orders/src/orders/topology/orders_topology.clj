@@ -64,7 +64,10 @@
 
 (defn group-by-location ^KGroupedStream [^KStream ks]
   (-> ks
-      (.map ^KStream (fn agg-count-kv-pair [_ {:order/keys [location-id] :as order}] (KeyValue/pair (str location-id) order)))
+      (.map ^KStream (fn agg-count-kv-pair [_k {:order/keys [location-id] :as order}] (KeyValue/pair (str location-id) order)))
+      ;; dev/note: `selectKey` Pretty much does the same operation as `map` above, in this case.
+      ;;       But much more simpler and semantically right.
+      ;; (.selectKey ^KStream (fn agg-count-select-key [_k {:order/keys [location-id]}] (str location-id)))
       (.groupByKey ^KGroupedStream (Grouped/with (Serdes/String) (serdes-factory/edn-serdes)))))
 
 (defn print> ^KStream [^KStream ks arg]
