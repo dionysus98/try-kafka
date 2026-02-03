@@ -119,7 +119,9 @@
 
 
 (comment
-  (publish-bulk-orders! 10)
+  (publish-bulk-orders! 1)
 
   (build-orders)
+
+  (+ (bigdec 0) 2)
   :rcf)

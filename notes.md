@@ -150,3 +150,21 @@
 - it sends notifications to kafka in case of changes.
 
 - kraft will replace zookeeper from kafka 4.x
+
+
+## 8 Kafka Streams [TODO]
+
+### 8.1 Topologies, Builders, Lambdas [TODO]
+
+## 9 KTable
+- It is an abstraction in Kafka Streams Which holds latest value for a given key in a Kafka Record.
+- A.K.A update-stream or change log.
+- Any record without a key will be ignored.
+
+- StateStore is necessary for storing data in an additional entity:
+  - the default state store is `RocksDB`. (KVstore)
+  - required to retain the data in case of restart/crash etc.
+  - `Materialized` api is used in creating a stateStore.
+  - also maintained in `changelog topic` for Fault Tolernace.
+
+- Any business usecase that requires that lastest value in a stream.
