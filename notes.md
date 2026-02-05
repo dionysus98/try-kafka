@@ -150,3 +150,18 @@
 - it sends notifications to kafka in case of changes.
 
 - kraft will replace zookeeper from kafka 4.x
+
+
+## 8 Kafka Streams
+
+## 9 KTable.
+- it is an abstraction for latest value of a record in a stream.
+- message should have a `key` for KTable to work.
+- global KTable is should have shared info between different instance of same stream.
+- A state-store can be used to keep kTable values.
+- By default RocksDB(KV) is used for Materialzied state-store.
+- uses an internal kafka topic for fault tolerance, retention etc.
+
+
+## 10. KStreams: Aggregations, Join and Windowing.
+- aggregation operation usually returns a KTable.
