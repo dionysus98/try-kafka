@@ -41,23 +41,14 @@
    (fn [_ order]
      (= (:order/type order) :general))))
 
-(defprotocol ITotalRevenue
-  (update-runnning-revenue [this ^String k order]))
-
-(deftype TotalRevenue [^String location-id ^Integer running-order-count ^BigDecimal running-revenue]
-  ITotalRevenue
-  (update-runnning-revenue [_this k order]
-    (log/info {:dev/total-revenue {:running-count running-order-count :running-revenue running-revenue :order order}})
-    (TotalRevenue. k (inc running-order-count) (+ running-revenue (:order/final-amount order)))))
-
-(defn total-revenue-init []
-  {:location-id         ""
-   :running-order-count 0
-   :running-revenue     (bigdec 0)})
+(def total-revenue-init
+  (constantly
+   {:location-id         ""
+    :running-order-count 0
+    :running-revenue     (bigdec 0)}))
 
 (defn total-revenue-aggregator
-  [_ v ^TotalRevenue agg]
-  (log/info {:dev/total-revenue agg})
+  [_ v agg]
   (-> agg
       (update :running-order-count inc)
       (update :running-revenue + (:order/final-amount v))))
@@ -74,14 +65,15 @@
   (.print ks arg)
   ks)
 
-(defn aggregate-order-by-count ^KStream [^KStream ks ^String store]
+(defn aggregate-order-by-count! ^KStream [^KStream ks ^String store]
   (-> ks
       (group-by-location)
       (.count ^KTable (Named/as store) (Materialized/as store))
       (.toStream)
-      (print> (.withLabel (Printed/toSysOut) store))))
+      (print> (.withLabel (Printed/toSysOut) store)))
+  ks)
 
-(defn aggregate-order-by-revenue ^KStream [^KStream ks ^String store]
+(defn aggregate-order-by-revenue! ^KStream [^KStream ks ^String store]
   (-> ks
       (group-by-location)
       (.aggregate ^KTable
@@ -91,7 +83,8 @@
            (.withKeySerde (Serdes/String))
            (.withValueSerde (serdes-factory/edn-serdes))))
       (.toStream)
-      (print> (.withLabel (Printed/toSysOut) store))))
+      (print> (.withLabel (Printed/toSysOut) store)))
+  ks)
 
 (def ^Branched general-order-branched
   (Branched/withConsumer
@@ -100,9 +93,9 @@
       (-> ks
           (.peek ^KStream (fn general-order-peek! [k v] (log/info {:dev.general-order/peek {k v}})))
           #_(.mapValues ^KStream (fn general-order-map-values [v] (order->revenue v)))
-          #_(.to (:general-orders topics) default-produced-serde))
-      (aggregate-order-by-count ks (:general-orders-count topics))
-      (aggregate-order-by-revenue ks (:general-orders-revenue topics))))))
+          #_(.to (:general-orders topics) default-produced-serde)
+          (aggregate-order-by-count! (:general-orders-count topics))
+          (aggregate-order-by-revenue! (:general-orders-revenue topics)))))))
 
 (def ^Predicate restaurant-order-predicate
   (interop/as-predicate
@@ -116,9 +109,9 @@
       (-> ks
           (.peek ^KStream (fn restaurant-order-peek! [k v] (log/info {:dev.restaurant-order/peek {k v}})))
           #_(.mapValues ^KStream (fn restaurant-order-map-values [v] (order->revenue v)))
-          #_(.to (:restaurant-orders topics) default-produced-serde))
-      (aggregate-order-by-count ks (:restaurant-orders-count topics))
-      (aggregate-order-by-revenue ks (:restaurant-orders-revenue topics))))))
+          #_(.to (:restaurant-orders topics) default-produced-serde)
+          (aggregate-order-by-count! (:restaurant-orders-count topics))
+          (aggregate-order-by-revenue! (:restaurant-orders-revenue topics)))))))
 
 (defn build-topology! []
   (let [^StreamsBuilder builder (StreamsBuilder.)]

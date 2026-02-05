@@ -17,7 +17,7 @@
   - Messages within each partition are ordered.
   - Each message within a partition gets an incremental id called `offset`
 
-- Kafka topics are *immutable*; :o
+- Kafka topics are _immutable_; :o
 - Data is kept for a limited time (limitation is configurable); :o
 - offset only have meaning for a specific partition
   - hence order is guaranteed only within a partition.
@@ -25,7 +25,7 @@
 
 ## 2 Producers
 
-- *writes/sends* data to topics (made of partitions)
+- _writes/sends_ data to topics (made of partitions)
 - knows in advance to which partition to write to (and which broker has it).
 - In case of kafka broker failures, Producers will automatically recover.
   - since many partitions are used, this load is balanced to many broker.
@@ -151,12 +151,12 @@
 
 - kraft will replace zookeeper from kafka 4.x
 
-
 ## 8 Kafka Streams [TODO]
 
 ### 8.1 Topologies, Builders, Lambdas [TODO]
 
 ## 9 KTable
+
 - It is an abstraction in Kafka Streams Which holds latest value for a given key in a Kafka Record.
 - A.K.A update-stream or change log.
 - Any record without a key will be ignored.
@@ -168,3 +168,51 @@
   - also maintained in `changelog topic` for Fault Tolernace.
 
 - Any business usecase that requires that lastest value in a stream.
+
+## 10 Aggregation, Joins, Windowing
+
+### 10.1 Aggregation:
+
+- key is required to do aggreagtion.
+- some useful aggregation operations:
+  - groupByKey (used for group data for aggregation)
+  - groupBy (used for group data for aggregation)
+  - count
+  - aggregate
+- aggregation operation will return a kTable.
+
+### 10.2 Joins
+
+- `Joins` in kafka streams are used to combine data from multiple topics.
+- it will only work if matching keys are in both topics.
+  - joins will get trigger if there's a matching record for same key.
+- it is a different from `merge` operator.
+  - `merge` has no condition or checks to combine events.
+- useful operations:
+  - join
+  - leftJoin
+    - would trigger the join, for the left stream, even if the other stream/table doesn't get any event (would have null)
+  - outerJoin
+    - would trigger the join, if either side of join gets an input.
+- join types:
+  - KStream-Ktable -> join,left
+    - will trigger join only when streams get input
+  - kStream-GlobalKStream -> join,left
+    - will trigger join only when streams get input
+  - kTable-KTable -> join,left,outer
+    - will trigger if any one of table gets input
+
+  - kStream-KStream -> join,left,outer
+    - bit different than the rest.
+    - works based on time-window, since kstreams act as an infinite stream which represents a log of all events.
+    - SO, they records should share the same key between topics, like the rest of join-types, but it also requires a time-window (eg:5sec) to act upon.
+    - time-window is required to be provided when creating a join between two streams.
+
+- `joins` also creates internal changelog topics in kafka.
+  - the names can be set via `withName` & `withStoreName`
+- #### Pre-requisites (Co-Partitioning):
+  - the source topics used for joins should have the same no.of.partitions
+    - Each partition is assigned to a task in Streams.
+    - This guarantess that the related tasks are together and join will work as expected.
+  - Related records should be **keyed** on the same _key_.
+  - these pre-requistes apply to all except KStream->GlobalKStream.

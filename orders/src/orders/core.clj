@@ -2,7 +2,7 @@
   (:require
    [clojure.tools.logging :as log]
    [orders.topology.orders-topology :as topology]
-   [orders.nrepl :as nrepl]
+   #_[orders.nrepl :as nrepl]
    [orders.utils :as utils])
   (:import
    [org.apache.kafka.clients.consumer ConsumerConfig]
@@ -43,9 +43,9 @@
 (defn -main
   "I don't do a whole lot ... yet."
   [& _]
-  (utils/add-shutdown-hook! (fn [] (de-init!) (nrepl/stop!)))
+  (utils/add-shutdown-hook! (fn [] (de-init!) #_(nrepl/stop!)))
   (try
-    (nrepl/start!)
+    #_(nrepl/start!)
     (init!)
     (catch Exception e
       (log/error e "Failed to start Order Streams app :c"))))
