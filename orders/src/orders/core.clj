@@ -7,7 +7,7 @@
   (:import
    [org.apache.kafka.clients.consumer ConsumerConfig]
    [org.apache.kafka.streams KafkaStreams StreamsConfig Topology]
-   #_[org.apache.kafka.streams.errors LogAndContinueExceptionHandler])
+   [org.apache.kafka.streams.errors LogAndContinueExceptionHandler])
   (:gen-class))
 
 (def ^:const APP_ID "orders-app")
@@ -15,8 +15,10 @@
 (def config
   {StreamsConfig/APPLICATION_ID_CONFIG     APP_ID
    StreamsConfig/BOOTSTRAP_SERVERS_CONFIG  "localhost:9092"
-   ;;  StreamsConfig/DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG
-   ;;  (.getName LogAndContinueExceptionHandler)
+   StreamsConfig/DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG
+   (.getName LogAndContinueExceptionHandler)
+  ;;  StreamsConfig/DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG
+  ;;  (.getName LogAndContinueExceptionHandler)
    ConsumerConfig/AUTO_OFFSET_RESET_CONFIG "latest"
    StreamsConfig/NUM_STREAM_THREADS_CONFIG "2"})
 
